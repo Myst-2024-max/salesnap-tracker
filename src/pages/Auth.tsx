@@ -10,6 +10,7 @@ import { useNavigate } from "react-router-dom";
 export default function Auth() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [fullName, setFullName] = useState("");
   const [loading, setLoading] = useState(false);
   const [isSignUp, setIsSignUp] = useState(false);
   const navigate = useNavigate();
@@ -25,7 +26,7 @@ export default function Auth() {
           password,
           options: {
             data: {
-              full_name: email.split("@")[0], // Default name from email
+              full_name: fullName,
             },
           },
         });
@@ -54,6 +55,17 @@ export default function Auth() {
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
+            {isSignUp && (
+              <div>
+                <Input
+                  type="text"
+                  placeholder="Full Name"
+                  value={fullName}
+                  onChange={(e) => setFullName(e.target.value)}
+                  required={isSignUp}
+                />
+              </div>
+            )}
             <div>
               <Input
                 type="email"
