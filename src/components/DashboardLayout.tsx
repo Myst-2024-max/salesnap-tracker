@@ -1,6 +1,7 @@
 
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "./AppSidebar";
+import { Link } from "react-router-dom";
 
 export function DashboardLayout({ children }: { children: React.ReactNode }) {
   return (
