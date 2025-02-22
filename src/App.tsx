@@ -1,26 +1,28 @@
-import { Toaster } from "@/components/ui/toaster";
-import { Toaster as Sonner } from "@/components/ui/sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
+
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Index from "./pages/Index";
+import { Toaster } from "@/components/ui/sonner";
+import { DashboardLayout } from "./components/DashboardLayout";
+import Dashboard from "./pages/Dashboard";
+import CheckInOut from "./pages/CheckInOut";
+import ActivityLogs from "./pages/ActivityLogs";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
+    <Toaster position="top-right" />
+    <BrowserRouter>
+      <DashboardLayout>
         <Routes>
-          <Route path="/" element={<Index />} />
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+          <Route path="/" element={<Dashboard />} />
+          <Route path="/checkin" element={<CheckInOut />} />
+          <Route path="/logs" element={<ActivityLogs />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
-      </BrowserRouter>
-    </TooltipProvider>
+      </DashboardLayout>
+    </BrowserRouter>
   </QueryClientProvider>
 );
 
