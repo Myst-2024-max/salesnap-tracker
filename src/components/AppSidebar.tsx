@@ -10,26 +10,36 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-
-const items = [
-  {
-    title: "Dashboard",
-    url: "/",
-    icon: LayoutDashboard,
-  },
-  {
-    title: "Check In/Out",
-    url: "/checkin",
-    icon: Building2,
-  },
-  {
-    title: "Activity Logs",
-    url: "/logs",
-    icon: ClipboardList,
-  },
-];
+import { useAuth } from "@/contexts/AuthContext";
+import { Button } from "./ui/button";
 
 export function AppSidebar() {
+  const { profile, signOut } = useAuth();
+  const isAdmin = profile?.role === "admin";
+
+  const items = [
+    {
+      title: isAdmin ? "Admin Dashboard" : "Dashboard",
+      url: "/",
+      icon: LayoutDashboard,
+    },
+    ...(isAdmin
+      ? [
+          {
+            title: "Activity Logs",
+            url: "/logs",
+            icon: ClipboardList,
+          },
+        ]
+      : [
+          {
+            title: "Check In/Out",
+            url: "/checkin",
+            icon: Building2,
+          },
+        ]),
+  ];
+
   return (
     <Sidebar>
       <SidebarContent>
@@ -49,6 +59,16 @@ export function AppSidebar() {
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
+              <SidebarMenuItem>
+                <Button
+                  variant="ghost"
+                  className="w-full justify-start gap-3"
+                  onClick={signOut}
+                >
+                  <LogOut className="h-5 w-5" />
+                  <span>Sign Out</span>
+                </Button>
+              </SidebarMenuItem>
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
