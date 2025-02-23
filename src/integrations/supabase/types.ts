@@ -60,6 +60,16 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: Database["public"]["Enums"]["app_role"]
       }
+      get_profile: {
+        Args: {
+          user_id: string
+        }
+        Returns: {
+          id: string
+          full_name: string
+          role: Database["public"]["Enums"]["app_role"]
+        }[]
+      }
     }
     Enums: {
       app_role: "admin" | "user"
