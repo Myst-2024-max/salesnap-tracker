@@ -26,58 +26,51 @@ function ProtectedRoute({ children, adminOnly = false }: { children: React.React
   }
 
   if (adminOnly && profile?.role !== "admin") {
-    return <Navigate to="/user/dashboard" />;
+    return <Navigate to="/dashboard" />;
   }
 
-  return <>{children}</>;
+  return children;
 }
 
 function AppRoutes() {
-  const { profile } = useAuth();
-  const isAdmin = profile?.role === "admin";
-
   return (
     <Routes>
       <Route path="/signin" element={<SignIn />} />
       <Route path="/signup" element={<SignUp />} />
       
-      {/* Admin Routes */}
-      <Route
-        path="/admin"
-        element={
-          <ProtectedRoute adminOnly>
-            <DashboardLayout />
-          </ProtectedRoute>
-        }
-      >
-        <Route path="dashboard" element={<AdminDashboard />} />
-        <Route path="logs" element={<ActivityLogs />} />
-      </Route>
-
-      {/* User Routes */}
-      <Route
-        path="/user"
-        element={
-          <ProtectedRoute>
-            <DashboardLayout />
-          </ProtectedRoute>
-        }
-      >
-        <Route path="dashboard" element={<UserDashboard />} />
-        <Route path="checkin" element={<CheckInOut />} />
-      </Route>
-
-      {/* Root redirects */}
-      <Route
-        path="/"
-        element={
-          <Navigate
-            to={isAdmin ? "/admin/dashboard" : "/user/dashboard"}
-            replace
-          />
-        }
-      />
+      <Route path="/dashboard" element={
+        <ProtectedRoute>
+          <DashboardLayout>
+            <UserDashboard />
+          </DashboardLayout>
+        </ProtectedRoute>
+      } />
       
+      <Route path="/admin" element={
+        <ProtectedRoute adminOnly>
+          <DashboardLayout>
+            <AdminDashboard />
+          </DashboardLayout>
+        </ProtectedRoute>
+      } />
+      
+      <Route path="/checkin" element={
+        <ProtectedRoute>
+          <DashboardLayout>
+            <CheckInOut />
+          </DashboardLayout>
+        </ProtectedRoute>
+      } />
+      
+      <Route path="/logs" element={
+        <ProtectedRoute adminOnly>
+          <DashboardLayout>
+            <ActivityLogs />
+          </DashboardLayout>
+        </ProtectedRoute>
+      } />
+      
+      <Route path="/" element={<Navigate to="/dashboard" replace />} />
       <Route path="*" element={<NotFound />} />
     </Routes>
   );
