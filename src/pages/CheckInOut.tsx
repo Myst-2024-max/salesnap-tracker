@@ -24,7 +24,6 @@ import { supabase } from "@/integrations/supabase/client";
 
 export default function CheckInOut() {
   const { profile } = useAuth();
-  const isAdmin = profile?.role === "admin";
   const queryClient = useQueryClient();
   
   // Form states
@@ -97,51 +96,49 @@ export default function CheckInOut() {
     <div className="max-w-md mx-auto animate-fadeIn">
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-3xl font-semibold">Check In/Out</h1>
-        {isAdmin && (
-          <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-            <DialogTrigger asChild>
-              <Button>Add Shop</Button>
-            </DialogTrigger>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Add New Shop</DialogTitle>
-              </DialogHeader>
-              <form onSubmit={handleAddShop} className="space-y-4 mt-4">
-                <Input
-                  placeholder="Shop Name"
-                  value={newShop.name}
-                  onChange={(e) =>
-                    setNewShop({ ...newShop, name: e.target.value })
-                  }
-                  required
-                />
-                <Input
-                  placeholder="Location"
-                  value={newShop.place}
-                  onChange={(e) =>
-                    setNewShop({ ...newShop, place: e.target.value })
-                  }
-                  required
-                />
-                <Input
-                  placeholder="Phone Number"
-                  value={newShop.phone_number}
-                  onChange={(e) =>
-                    setNewShop({ ...newShop, phone_number: e.target.value })
-                  }
-                  required
-                />
-                <Button
-                  type="submit"
-                  className="w-full"
-                  disabled={addShopMutation.isPending}
-                >
-                  {addShopMutation.isPending ? "Adding..." : "Add Shop"}
-                </Button>
-              </form>
-            </DialogContent>
-          </Dialog>
-        )}
+        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+          <DialogTrigger asChild>
+            <Button>Add Shop</Button>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Add New Shop</DialogTitle>
+            </DialogHeader>
+            <form onSubmit={handleAddShop} className="space-y-4 mt-4">
+              <Input
+                placeholder="Shop Name"
+                value={newShop.name}
+                onChange={(e) =>
+                  setNewShop({ ...newShop, name: e.target.value })
+                }
+                required
+              />
+              <Input
+                placeholder="Location"
+                value={newShop.place}
+                onChange={(e) =>
+                  setNewShop({ ...newShop, place: e.target.value })
+                }
+                required
+              />
+              <Input
+                placeholder="Phone Number"
+                value={newShop.phone_number}
+                onChange={(e) =>
+                  setNewShop({ ...newShop, phone_number: e.target.value })
+                }
+                required
+              />
+              <Button
+                type="submit"
+                className="w-full"
+                disabled={addShopMutation.isPending}
+              >
+                {addShopMutation.isPending ? "Adding..." : "Add Shop"}
+              </Button>
+            </form>
+          </DialogContent>
+        </Dialog>
       </div>
 
       <Card>
