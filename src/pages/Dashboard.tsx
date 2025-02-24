@@ -1,6 +1,6 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Building2, DollarSign } from "lucide-react";
+import { Building2, IndianRupee } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -46,12 +46,12 @@ export default function Dashboard() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium">Total Sales</CardTitle>
-            <DollarSign className="h-4 w-4 text-gray-500" />
+            <IndianRupee className="h-4 w-4 text-gray-500" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">$2,450</div>
+            <div className="text-2xl font-bold">₹2,45,000</div>
             <p className="text-xs text-muted-foreground mt-1">
-              Today's sales: $350
+              Today's sales: ₹35,000
             </p>
           </CardContent>
         </Card>
