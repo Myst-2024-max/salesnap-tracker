@@ -25,13 +25,12 @@ export default function SignUp() {
           data: {
             role: "user",
           },
-          emailRedirectTo: `${window.location.origin}/signin`
         },
       });
 
       if (error) throw error;
 
-      toast.success("Successfully signed up!");
+      toast.success("Successfully signed up! You can now sign in.");
       navigate("/signin");
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Failed to sign up");
