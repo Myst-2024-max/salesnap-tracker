@@ -30,6 +30,7 @@ export default function CheckInOut() {
   const [selectedShop, setSelectedShop] = useState("");
   const [saleAmount, setSaleAmount] = useState("");
   const [isCheckedIn, setIsCheckedIn] = useState(false);
+  const [currentCheckInId, setCurrentCheckInId] = useState<string | null>(null);
   const [newShop, setNewShop] = useState({
     name: "",
     place: "",
@@ -67,6 +68,49 @@ export default function CheckInOut() {
     },
   });
 
+  // Check-in mutation
+  const checkInMutation = useMutation({
+    mutationFn: async (shopId: string) => {
+      const { data, error } = await supabase
+        .from("check_ins")
+        .insert([{ shop_id: shopId }])
+        .select()
+        .single();
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: (data) => {
+      setCurrentCheckInId(data.id);
+      queryClient.invalidateQueries({ queryKey: ["todayCheckIns"] });
+      toast.success(`Checked in at ${selectedShop}`);
+    },
+    onError: (error: Error) => {
+      toast.error(error.message);
+    },
+  });
+
+  // Check-out mutation
+  const checkOutMutation = useMutation({
+    mutationFn: async ({ checkInId, amount }: { checkInId: string; amount: number }) => {
+      const { error } = await supabase
+        .from("check_ins")
+        .update({ 
+          sales_amount: amount,
+          checked_out_at: new Date().toISOString()
+        })
+        .eq("id", checkInId);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["todayCheckIns"] });
+      queryClient.invalidateQueries({ queryKey: ["todaySales"] });
+      toast.success("Successfully checked out");
+    },
+    onError: (error: Error) => {
+      toast.error(error.message);
+    },
+  });
+
   const handleAddShop = async (e: React.FormEvent) => {
     e.preventDefault();
     addShopMutation.mutate(newShop);
@@ -77,8 +121,11 @@ export default function CheckInOut() {
       toast.error("Please select a shop first");
       return;
     }
-    setIsCheckedIn(true);
-    toast.success(`Checked in at ${selectedShop}`);
+    const shop = shops.find(s => s.name === selectedShop);
+    if (shop) {
+      checkInMutation.mutate(shop.id);
+      setIsCheckedIn(true);
+    }
   };
 
   const handleCheckOut = () => {
@@ -86,10 +133,16 @@ export default function CheckInOut() {
       toast.error("Please enter sales amount");
       return;
     }
-    setIsCheckedIn(false);
-    setSelectedShop("");
-    setSaleAmount("");
-    toast.success("Successfully checked out");
+    if (currentCheckInId) {
+      checkOutMutation.mutate({
+        checkInId: currentCheckInId,
+        amount: Number(saleAmount)
+      });
+      setIsCheckedIn(false);
+      setSelectedShop("");
+      setSaleAmount("");
+      setCurrentCheckInId(null);
+    }
   };
 
   return (

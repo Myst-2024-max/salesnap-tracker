@@ -9,6 +9,38 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      check_ins: {
+        Row: {
+          checked_out_at: string | null
+          created_at: string
+          id: string
+          sales_amount: number | null
+          shop_id: string
+        }
+        Insert: {
+          checked_out_at?: string | null
+          created_at?: string
+          id?: string
+          sales_amount?: number | null
+          shop_id: string
+        }
+        Update: {
+          checked_out_at?: string | null
+          created_at?: string
+          id?: string
+          sales_amount?: number | null
+          shop_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "check_ins_shop_id_fkey"
+            columns: ["shop_id"]
+            isOneToOne: false
+            referencedRelation: "shops"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           full_name: string | null
