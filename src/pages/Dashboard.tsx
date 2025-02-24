@@ -26,6 +26,59 @@ export default function Dashboard() {
     },
   });
 
+  // Fetch today's check-ins
+  const { data: checkInsData } = useQuery({
+    queryKey: ["todayCheckIns"],
+    queryFn: async () => {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      
+      const { data, error } = await supabase
+        .from("check_ins")
+        .select("*")
+        .gte('created_at', today.toISOString())
+        .order('created_at', { ascending: false });
+        
+      if (error) throw error;
+      return data;
+    },
+    refetchInterval: 30000, // Refetch every 30 seconds
+  });
+
+  // Fetch today's sales
+  const { data: salesData } = useQuery({
+    queryKey: ["todaySales"],
+    queryFn: async () => {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      
+      const { data, error } = await supabase
+        .from("check_ins")
+        .select("sales_amount")
+        .gte('created_at', today.toISOString());
+        
+      if (error) throw error;
+      
+      const totalSales = data?.reduce((sum, record) => sum + (record.sales_amount || 0), 0);
+      return totalSales || 0;
+    },
+    refetchInterval: 30000, // Refetch every 30 seconds
+  });
+
+  // Get the last check-in time
+  const lastCheckIn = checkInsData?.[0]?.created_at
+    ? new Date(checkInsData[0].created_at)
+    : null;
+
+  // Calculate time difference for last check-in
+  const getLastCheckInText = () => {
+    if (!lastCheckIn) return "No check-ins today";
+    
+    const diff = Math.floor((new Date().getTime() - lastCheckIn.getTime()) / (1000 * 60));
+    if (diff < 60) return `${diff} minutes ago`;
+    return `${Math.floor(diff / 60)} hours ago`;
+  };
+
   return (
     <div className="animate-fadeIn space-y-6">
       <h1 className="text-3xl font-semibold mb-8">Dashboard</h1>
@@ -37,9 +90,9 @@ export default function Dashboard() {
             <Building2 className="h-4 w-4 text-gray-500" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">3</div>
+            <div className="text-2xl font-bold">{checkInsData?.length || 0}</div>
             <p className="text-xs text-muted-foreground mt-1">
-              Last check-in: 2 hours ago
+              Last check-in: {getLastCheckInText()}
             </p>
           </CardContent>
         </Card>
@@ -49,9 +102,11 @@ export default function Dashboard() {
             <IndianRupee className="h-4 w-4 text-gray-500" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">₹2,45,000</div>
+            <div className="text-2xl font-bold">
+              ₹{salesData?.toLocaleString('en-IN') || '0'}
+            </div>
             <p className="text-xs text-muted-foreground mt-1">
-              Today's sales: ₹35,000
+              All sales today
             </p>
           </CardContent>
         </Card>
