@@ -148,18 +148,18 @@ export default function CheckInOut() {
   return (
     <div className="max-w-md mx-auto animate-fadeIn">
       <div className="flex justify-between items-center mb-8">
-        <h1 className="text-3xl font-semibold">Check In/Out</h1>
+        <h1 className="text-3xl font-semibold">Shop Visit Manager</h1>
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>
-            <Button>Add Shop</Button>
+            <Button>Register New Shop</Button>
           </DialogTrigger>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>Add New Shop</DialogTitle>
+              <DialogTitle>Register New Shop</DialogTitle>
             </DialogHeader>
             <form onSubmit={handleAddShop} className="space-y-4 mt-4">
               <Input
-                placeholder="Shop Name"
+                placeholder="Enter shop name"
                 value={newShop.name}
                 onChange={(e) =>
                   setNewShop({ ...newShop, name: e.target.value })
@@ -167,7 +167,7 @@ export default function CheckInOut() {
                 required
               />
               <Input
-                placeholder="Location"
+                placeholder="Enter shop location"
                 value={newShop.place}
                 onChange={(e) =>
                   setNewShop({ ...newShop, place: e.target.value })
@@ -175,7 +175,7 @@ export default function CheckInOut() {
                 required
               />
               <Input
-                placeholder="Phone Number"
+                placeholder="Enter contact number"
                 value={newShop.phone_number}
                 onChange={(e) =>
                   setNewShop({ ...newShop, phone_number: e.target.value })
@@ -187,7 +187,7 @@ export default function CheckInOut() {
                 className="w-full"
                 disabled={addShopMutation.isPending}
               >
-                {addShopMutation.isPending ? "Adding..." : "Add Shop"}
+                {addShopMutation.isPending ? "Registering Shop..." : "Register Shop"}
               </Button>
             </form>
           </DialogContent>
@@ -197,7 +197,9 @@ export default function CheckInOut() {
       <Card>
         <CardHeader>
           <CardTitle>
-            {isCheckedIn ? "Currently Checked In" : "Check In to Shop"}
+            {isCheckedIn 
+              ? "You're Currently Visiting"
+              : "Start Your Shop Visit"}
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -207,7 +209,7 @@ export default function CheckInOut() {
             disabled={isCheckedIn}
           >
             <SelectTrigger>
-              <SelectValue placeholder="Select a shop" />
+              <SelectValue placeholder="Choose a shop to visit" />
             </SelectTrigger>
             <SelectContent>
               {shops.map((shop) => (
@@ -220,9 +222,12 @@ export default function CheckInOut() {
 
           {isCheckedIn && (
             <div className="space-y-4">
+              <p className="text-sm text-muted-foreground">
+                Ready to complete your visit? Please enter the total sales amount:
+              </p>
               <Input
                 type="number"
-                placeholder="Enter sales amount"
+                placeholder="Enter total sales amount (₹)"
                 value={saleAmount}
                 onChange={(e) => setSaleAmount(e.target.value)}
               />
@@ -233,7 +238,7 @@ export default function CheckInOut() {
             className="w-full"
             onClick={isCheckedIn ? handleCheckOut : handleCheckIn}
           >
-            {isCheckedIn ? "Check Out" : "Check In"}
+            {isCheckedIn ? "Complete Visit & Save Sales" : "Start Shop Visit"}
           </Button>
         </CardContent>
       </Card>
